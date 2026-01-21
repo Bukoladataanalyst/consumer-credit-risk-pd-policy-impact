@@ -109,3 +109,8 @@ Portfolio risk monitoring
 Lending strategy evaluation
 
 Executive risk reporting
+
+### Data Availability
+The full modeling dataset (`consumer_loans_scored.csv`, ~400k rows) is not included in this repository due to size constraints.  
+All analysis, SQL logic, and dashboard outputs in this project are reproducible from the documented feature set and transformations.
+
