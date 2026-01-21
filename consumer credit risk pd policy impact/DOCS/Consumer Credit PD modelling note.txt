@@ -1,0 +1,197 @@
+# Consumer Credit PD Modeling (WOE + Logistic Regression)
+
+## 1. Business Context & Objective
+
+The goal of this project is to develop a **production‑style Probability of Default (PD) model** for a consumer lending portfolio. The emphasis is on **interpretability, stability, and decision‑making usefulness**, rather than pure predictive complexity.
+
+The model is designed to answer practical credit‑risk questions:
+
+* Can we meaningfully rank borrowers from safest to riskiest?
+* How do approval decisions affect portfolio risk?
+* Which borrower segments drive expected loss?
+* How do loan terms interact with credit quality?
+
+This approach mirrors how PD models are used in real fintech and consumer‑lending environments.
+
+---
+
+## 2. Data Overview & Target Definition
+
+The analysis uses Lending Club accepted loans data. The modeling population is restricted to **resolved loans** to avoid label ambiguity.
+
+**Target definition:**
+
+* Default = Charged Off + Default (1)
+* Non‑default = Fully Paid (0)
+* Active, late, and grace‑period loans are excluded
+
+This definition ensures a clean binary outcome consistent with underwriting and portfolio‑risk use cases.
+
+---
+
+## 3. Feature Selection & Modeling Dataset
+
+A curated set of borrower and loan‑level features is selected to reflect information available at origination, including:
+
+* Loan characteristics (loan amount, term, installment, interest rate)
+* Borrower affordability and leverage (income, DTI)
+* Credit profile proxies (sub‑grade, revolving balance/utilization)
+* Employment and verification indicators
+
+A modeling dataset (`df_step1`) is created containing the selected predictors and the target variable. This dataset forms the basis for train/test splitting.
+
+---
+
+## 4. Train/Test Split & Data Hygiene
+
+The data is split into training and test samples using a **stratified split** to preserve default rates across samples. This allows for honest out‑of‑sample performance assessment.
+
+### Preserving Raw Data for Business Analysis
+
+Raw copies of the train and test sets are retained **before WOE encoding**. This separation is intentional:
+
+* Transformed features are used for modeling
+* Raw features are used for portfolio segmentation, reporting, and interpretation
+
+This mirrors standard industry practice where models are built on transformed variables, but insights are communicated using original business attributes.
+
+---
+
+## 5. WOE Encoding & Feature Transformation
+
+All predictors are transformed using **Weight of Evidence (WOE)** encoding.
+
+**Why WOE:**
+
+* Produces monotonic, interpretable relationships
+* Aligns with logistic regression assumptions
+* Supports regulatory explainability
+* Enables stable coefficient interpretation
+
+Numeric variables are binned using quantile‑based binning. Categorical variables are encoded at the category level. Missing or unseen values are assigned neutral WOE (0), representing average portfolio risk.
+
+WOE mappings are derived **only from the training data** to prevent leakage.
+
+---
+
+## 6. Model Specification
+
+A **logistic regression** model is fitted on the WOE‑encoded training data.
+
+This model choice reflects real‑world credit‑risk standards:
+
+* Transparent coefficients
+* Stable behavior across samples
+* Straightforward governance and validation
+
+The model outputs predicted probabilities of default (PDs) for both training and test samples.
+
+---
+
+## 7. Model Performance & Validation
+
+### Discriminatory Power
+
+Model performance is assessed using KS statistics:
+
+* Train KS ≈ 0.30
+* Test KS ≈ 0.30
+
+This level of separation is considered **solid for consumer credit portfolios** and indicates good rank‑ordering power with minimal overfitting.
+
+### Stability
+
+Near‑identical train and test performance confirms that the model generalizes well and that the WOE binning is stable.
+
+---
+
+## 8. PD Deciles & Rank Ordering
+
+Borrowers in the test sample are grouped into **PD deciles** based on predicted risk.
+
+Observed default rates increase monotonically from the lowest‑risk decile to the highest‑risk decile, closely tracking average predicted PDs. Default rates rise from roughly **4% in the safest band to about 45% in the riskiest band**.
+
+This confirms that the model meaningfully ranks borrowers from safest to riskiest and that predictions are reasonably calibrated.
+
+---
+
+## 9. Approval Threshold & Risk Trade‑Off
+
+A PD cutoff is applied to simulate underwriting decisions.
+
+At the selected threshold:
+
+* Approximately **41%** of applicants are approved
+* The overall applicant pool has a default rate of ~**20%**
+* The approved population’s default rate falls to ~**9%**
+
+This demonstrates the core approval vs loss trade‑off:
+
+* Tighter thresholds reduce losses but limit growth
+* Looser thresholds increase growth at the cost of higher risk
+
+The model provides a transparent framework for choosing where to balance risk appetite and growth objectives.
+
+---
+
+## 10. Expected Loss Framework
+
+To translate PDs into portfolio impact, a simplified expected loss (EL) framework is used:
+
+**EL = PD × LGD**
+
+A constant LGD assumption (e.g., 60%) is applied for illustration. While simplified, this is sufficient to identify **loss concentration patterns** across segments.
+
+---
+
+## 11. Expected Loss by Sub‑Grade
+
+Expected loss is analyzed by reattaching model outputs to raw test data.
+
+Key findings:
+
+* Lower sub‑grades (G and F) exhibit the highest expected loss due to very high PDs
+* Mid‑risk grades (E and F) also contribute materially to loss because of higher loan volumes
+
+This highlights that expected loss is driven by **both risk and volume**, not risk alone.
+
+---
+
+## 12. Grade × Term Analysis
+
+Sub‑grades are aggregated into broader grades (A–G) and analyzed jointly with loan term.
+
+Results show:
+
+* Expected loss increases as credit quality deteriorates
+* 60‑month loans consistently exhibit higher expected loss than 36‑month loans
+* The impact of longer terms is modest for high‑quality borrowers but **pronounced for lower grades**
+
+This indicates that loan term acts as a **risk amplifier**, particularly in already vulnerable segments.
+
+---
+
+## 13. Business Implications
+
+The analysis supports several practical credit‑policy insights:
+
+* Term caps or stricter criteria for lower‑grade borrowers
+* Pricing premiums for longer‑tenor loans
+* Portfolio steering toward shorter‑term, mid‑grade segments
+
+Rather than prescribing a single decision, the model enables informed trade‑offs between growth, pricing, and risk.
+
+---
+
+## 14. Conclusion
+
+This project delivers a **senior‑level, production‑style PD modeling workflow**:
+
+* Interpretable WOE‑based features
+* Stable logistic regression model
+* Strong rank ordering and calibration
+* Clear linkage from model output to underwriting and portfolio decisions
+
+The focus on transparency, governance, and business relevance reflects how PD models are built and used in real consumer‑lending and fintech environments.
+
+Python analysis concludes here. Subsequent steps (SQL validation, Power BI visualization, and case‑study packaging) focus on **communication and decision support**, not additional modeling.
