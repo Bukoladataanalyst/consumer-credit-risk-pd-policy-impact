@@ -1,11 +1,11 @@
-#Consumer Credit Risk — PD Segmentation & Policy Impact
-#Overview
+**Consumer Credit Risk — PD Segmentation & Policy Impact
+Overview**
 
 This project evaluates consumer credit risk by modeling borrower Probability of Default (PD) and assessing how PD-based approval thresholds influence portfolio performance. The analysis focuses on risk ranking, loss concentration, and the trade-off between approval volume and credit exposure.
 
 The work mirrors a real-world credit risk workflow: model development in Python, validation and aggregation in SQL Server, and executive reporting in Power BI.
 
-#Business Questions
+**Business Questions**
 
 Can borrowers be reliably rank-ordered by default risk for decisioning?
 
@@ -13,7 +13,7 @@ Where is expected loss concentrated across borrower segments and loan structures
 
 How does a PD-based approval policy change default rates, expected loss, and loss-to-revenue efficiency?
 
-#Dataset
+**Dataset**
 
 Consumer installment loan portfolio
 
@@ -39,7 +39,7 @@ Default rate monotonicity
 
 KS statistic (≈ 30%)
 
-#Outcome:
+**Outcome**:
 The model cleanly rank-orders borrowers from lowest to highest risk, making it suitable for policy decisioning.
 
 Risk Segmentation & Policy Design
@@ -80,7 +80,7 @@ Approval volume, expected loss, and loss-to-revenue comparison
 
 The dashboard is designed for senior stakeholders to assess risk trade-offs in seconds.
 
-#Key Findings
+**Key Findings**
 
 Default rates increase monotonically from the safest to riskiest PD deciles
 
@@ -90,7 +90,7 @@ A PD-based approval policy materially reduces expected loss while preserving a m
 
 Loss-to-revenue efficiency improves under the policy scenario, illustrating the growth vs risk trade-off
 
-#Deliverables
+**Deliverables**
 
 Python: PD model development and validation
 
@@ -100,7 +100,7 @@ Power BI: Executive risk dashboard
 
 Presentation: Stakeholder-ready summary of findings and decisions
 
-#Use Cases
+**Use Cases**
 
 Credit policy design
 
