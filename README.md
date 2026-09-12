@@ -110,6 +110,9 @@ Lending strategy evaluation
 
 Executive risk reporting
 
+<img width="766" height="511" alt="image" src="https://github.com/user-attachments/assets/ef0b7633-0f13-4aa8-9b3b-304eb943d71a" />
+
+
 ### Data Availability
 The full modeling dataset (`consumer_loans_scored.csv`, ~400k rows) is not included in this repository due to size constraints.  
 All analysis, SQL logic, and dashboard outputs in this project are reproducible from the documented feature set and transformations.
